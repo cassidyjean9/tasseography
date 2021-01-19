@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<head>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+    <table class="header">
+        <tr>
+        <td><img src="assets/dragonfly.gif"></td>
+
+        <td><h1> Welcome to my page!!!!!</h1></td>
+
+        <td> <img src="assets/dragonfly.gif"></td>
+    </tr>
+    <tr> 
+        <td><img src=""></td>
+
+        <td><img src="assets/line.gif"></h1></td>
+
+        <td> <img src=""></td>
+    </tr>
+    </table>
+
+<table class="main">
+   <tr> 
+        <td><img src=""></td>
+
+        <td><h3> You can use my page to get a computer tea leaf reading. <br> <br> Click the button to take a picture of your cup, after you've drank your tea and swirled it around 3 times.</h3></td>
+
+        <td> <img src=""></td>
+    </tr>
+    <tr> 
+        <td><img src=""></td>
+
+        <td><button type='button' onclick='init()'>Get reading</button></td>
+
+        <td> <img src=""></td>
+    </tr>
+    <tr>
+        <td><img src=""></td>
+
+        <td><div id='webcam-container'></div></td>
+
+        <td> <button type="button" id="takePicButton" style="display: none;" onclick='takePic()'>Take Picture</button></td>
+    </tr>
+    
+    <tr>
+        <td> <img src=""></td>
+    
+        <td> <div id='label-container' style="display: none;"></div> </td>
+
+        <td></td>
+    </tr>
+    <tr>
+        <td><img src="assets/spiral.gif"></td>
+    
+        <td> </td>
+
+        <td><img src="assets/spiral.gif"></td>
+    </tr>
+</table>
+
+<p class="thanks"><a href="/about">About this site</a>  Special Thanks to <a href="http://www.oocities.org/faerygroveie/magick/divination/">Aon Celtic Art</a> for the Lovely Graphics</p>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.3/dist/teachablemachine-image.min.js"></script>
+<script type="text/javascript">
+    // More API functions here:
+    // https://github.com/googlecreativelab/teachablemachine-community/tree/master/libraries/image
+
+    // the link to your model provided by Teachable Machine export panel
+    const URL = 'https://teachablemachine.withgoogle.com/models/WTrU9_dWJ/';
+
+    let model, webcam, labelContainer, maxPredictions,symbol, symbolMeaning;
+
+    // Load the image model and setup the webcam
+    async function init() {
+        const modelURL = URL + 'model.json';
+        const metadataURL = URL + 'metadata.json';
+
+        //show take pic button 
+        document.getElementById("takePicButton").style.display = "block";
+
+        // load the model and metadata
+        // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
+        // or files from your local hard drive
+        model = await tmImage.load(modelURL, metadataURL);
+        maxPredictions = model.getTotalClasses();
+
+        // Convenience function to setup a webcam
+        const flip = true; // whether to flip the webcam
+        webcam = new tmImage.Webcam(200, 200, flip); // width, height, flip
+        await webcam.setup(); // request access to the webcam
+        webcam.play();
+        window.requestAnimationFrame(loop);
+
+        // append elements to the DOM
+        document.getElementById('webcam-container').appendChild(webcam.canvas);
+        labelContainer = document.getElementById('label-container');
+        for (let i = 0; i < maxPredictions; i++) { // and class labels
+            labelContainer.appendChild(document.createElement('div'));
+        }
+    }
+
+//pause webcam
+    function takePic(){
+        webcam.pause();
+
+        predict();
+
+        showPredictions();
+    };
+
+    //show predictions 
+    function showPredictions(){
+        document.getElementById("label-container").style.display = "block";
+    }
+
+    async function loop() {
+        webcam.update(); // update the webcam frame
+        
+        window.requestAnimationFrame(loop);
+    }
+
+
+
+    // run the webcam image through the image model
+    async function predict() {
+        // predict can take in an image, video or canvas html element
+        const prediction = await model.predictTopK(
+            image = webcam.canvas, 
+            maxPredictions=3,
+            flipped= true
+
+            );
+        for (let i = 0; i < maxPredictions; i++) {
+
+            symbol = prediction[i].className;
+
+            getSymbolMeanings();
+
+            const classPrediction =
+                prediction[i].className + ': ' + prediction[i].probability.toFixed(2);
+            labelContainer.childNodes[i].innerHTML = symbolMeaning;
+            
+            console.log("predictions are " + classPrediction);
+        }
+    }
+
+
+    //logic for symbols 
+
+function getSymbolMeanings() {
+
+    if (symbol == "sun") {
+        symbolMeaning = "This is a time of happiness, health, success in love, prosperity, and the beneficial discovery of secrets."
+    }
+    if (symbol == "cresent") {
+        symbolMeaning = "A crescent moon denotes good news, fortune, and romance; for a man it predicts public recognition and honour."
+    }
+    if (symbol == "sum") {
+        symbolMeaning = "Things which you desire are developing in the wished-for direction; the arch is a sign of hope; your ambition may be gratified in a most unexpected manner. See also Triumphal Arch."
+    }
+    if (symbol == "motion") {
+        symbolMeaning = "Motion; movement."
+    }
+    if (symbol == "exit") {
+        symbolMeaning = "There will be significant happiness and joyful tidings; speedy news, telegrams;"
+    }
+    if (symbol == "three") {
+        symbolMeaning = "Threefold events."
+    }
+    if (symbol == "water") {
+        symbolMeaning = "You may find yourself near a body of water."
+    }
+    if (symbol == "cup") {
+        symbolMeaning = "A time of celebration is near."
+    }
+    if (symbol == "aires") {
+        symbolMeaning = "An accident is predicted."
+    }
+    if (symbol == "orbit") {
+        symbolMeaning = "A cycle is forming."
+    }
+    if (symbol == "bird") {
+        symbolMeaning = "Significant happiness and joyful tidings."
+    }
+    if (symbol == "lock") {
+        symbolMeaning = "You are warned against the loss of something you value."
+    }
+    if (symbol == "exit") {
+        symbolMeaning = "There will be significant happiness and joyful tidings; speedy news, telegrams;"
+    }
+    if (symbol == "up") {
+        symbolMeaning = "Yes."
+    }
+    if (symbol == "down") {
+        symbolMeaning = "No."
+    }
+    if (symbol == "changes") {
+        symbolMeaning = "Changes are coming."
+    }
+    if (symbol == "travel") {
+        symbolMeaning = "Travel is in your future."
+    }
+    if (symbol == "love") {
+        symbolMeaning = "A new romantic interest, or the strengthening of a current one."
+    }
+    if (symbol == "man") {
+        symbolMeaning = "A man."
+    }
+    if (symbol == "star") {
+        symbolMeaning = "A lucky sign; wealth and honor are foretold."
+    }
+    if (symbol == "greater") {
+        symbolMeaning = "Greater; more; strengthening of other symbols."
+    }
+    if (symbol == "less") {
+        symbolMeaning = "Less; the weakening of other symbols."
+    }
+    if (symbol == "horseshoe") {
+        symbolMeaning = "Your wish will come true; luck."
+    }
+    if (symbol == "cross") {
+        symbolMeaning = "You must expect to meet with hindrances and obstacles in the way of your desires; sorrow and misfortune."
+    }
+    if (symbol == "spiral") {
+        symbolMeaning = "Success through industry and perseverance."
+    }
+    if (symbol == "dashes") {
+        symbolMeaning = "Brief travel or business."
+    }
+    if (symbol == "lines") {
+        symbolMeaning = "Travel; change."
+    };
+    
+    return symbolMeaning;
+}
+</script>
+
+</body>
