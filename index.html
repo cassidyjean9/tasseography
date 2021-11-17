@@ -25,14 +25,15 @@
    <tr> 
         <td><img src=""></td>
 
-        <td><h3> You can use my page to get a computer tea leaf reading. <br> <br> Click the button to take a picture of your cup, after you've drank your tea and swirled it around 3 times.</h3></td>
+        <td><h3> You can use my page to get a computer tea leaf reading. <br> <br> Drink your tea and swirl it around 3 times. Then click the button to take a picture of your cup and get a reading.</h3>
+        <br> <h3>You can click refresh if you want to do another reading.</h3></td>
 
         <td> <img src=""></td>
     </tr>
     <tr> 
         <td><img src=""></td>
 
-        <td><button type='button' onclick='init()'>Get reading</button></td>
+        <td><button type='button' id="getReadingButton" onclick='init()'>Get reading</button></td>
 
         <td> <img src=""></td>
     </tr>
@@ -41,7 +42,14 @@
 
         <td><div id='webcam-container'></div></td>
 
-        <td> <button type="button" id="takePicButton" style="display: none;" onclick='takePic()'>Take Picture</button></td>
+        <td><img src=""></td>
+    </tr>
+    <tr>
+        <td><img src=""></td>
+
+        <td><button type="button" id="takePicButton" style="display: none;" onclick='takePic()'>Take Picture</button></td>
+
+        <td><img src=""></td>
     </tr>
     
     <tr>
@@ -80,6 +88,7 @@
 
         //show take pic button 
         document.getElementById("takePicButton").style.display = "block";
+        document.getElementById("getReadingButton").style.display = "none";
 
         // load the model and metadata
         // Refer to tmImage.loadFromFiles() in the API to support files from a file picker
